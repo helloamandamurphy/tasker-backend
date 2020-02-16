@@ -1,7 +1,7 @@
 class Api::V1::ListsController < ApplicationController
   def index
     @lists = List.all
-    render json: @lists, status: 200
+    render json: @lists, :include => {:tasks => {:except => [:created_at, :updated_at]}}, :except => [:created_at, :updated_at], status: 200
   end
 
   def show

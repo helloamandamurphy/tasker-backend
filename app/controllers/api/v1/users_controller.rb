@@ -1,8 +1,8 @@
 class Api::V1::UsersController < ApplicationController
-  # def index
-  #   @users = User.all
-  #   render json: @users, status: 200
-  # end
+  def index
+    @users = User.all
+    render json: @users, :include => {:lists => {only: :name}}, :except => [:created_at, :updated_at, :password_digest], status: 200
+  end
 
   def show
     @user = User.find(params[:id])
