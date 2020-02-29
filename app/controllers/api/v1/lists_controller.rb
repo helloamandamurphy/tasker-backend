@@ -1,9 +1,10 @@
 class Api::V1::ListsController < ApplicationController
 
-  before_action :set_user
+  # before_action :set_user
 
   def index
-    @lists = @user.lists
+    @lists = List.all
+    # @lists = @user.lists
     render json: @lists, status: 200
   end
 
