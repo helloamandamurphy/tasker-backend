@@ -16,7 +16,10 @@ class Api::V1::ListsController < ApplicationController
   end
 
   def create
-    @list = @account.lists.build(list_params)
+    # binding.pry
+    @list = List.new(list_params)
+    # This is not currently saving, because there is no User associated with it.
+    #@list = @account.lists.build(list_params)
     if @list.save
       render json: @list, status: 200
     else
@@ -49,6 +52,6 @@ class Api::V1::ListsController < ApplicationController
     end
 
     def list_params
-      params.require(:list).permit(:name, :end_time, tasks_attributes: [:name, :est_time])
+      params.require(:list).permit(:name, :start_time, :end_time, tasks_attributes: [:name, :est_time])
     end
 end
