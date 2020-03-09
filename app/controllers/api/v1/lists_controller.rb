@@ -3,9 +3,16 @@ class Api::V1::ListsController < ApplicationController
   # before_action :set_user
 
   def index
-    @lists = List.all
+    # @lists = List.all
     # @lists = @user.lists
-    render json: @lists, status: 200
+    if logged_in?
+      @lists = current_user.lists
+      render json: @lists, status: 200
+    else
+      render json: {
+        error: "You must be logged in to view lists."
+      }
+    end
   end
 
   def show
@@ -43,10 +50,12 @@ class Api::V1::ListsController < ApplicationController
   end
 
   private
+  # This sets the user based on the list's user id.
     def set_user
       @user = User.find(params[:user_id])
     end
-
+    
+  # This sets the list by finding the list id belonging to the user.
     def find_user_list
       @list = @user.lists.find_by(id: params[:id])
     end
