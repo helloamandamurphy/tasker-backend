@@ -23,14 +23,16 @@ class Api::V1::ListsController < ApplicationController
   end
 
   def create
-    # binding.pry
     @list = List.new(list_params)
     # This is not currently saving, because there is no User associated with it.
     #@list = @account.lists.build(list_params)
     if @list.save
-      render json: @list, status: 200
+      render json: @list, status: :created
     else
-      render json: {error: "Error creating list"}
+      error_resp = {
+        error: @list.errors.full_messages.to_sentence
+      }
+      render json: @list.errors, status: :unprocessable_entity
     end
   end
 
@@ -54,13 +56,13 @@ class Api::V1::ListsController < ApplicationController
     def set_user
       @user = User.find(params[:user_id])
     end
-    
+
   # This sets the list by finding the list id belonging to the user.
     def find_user_list
       @list = @user.lists.find_by(id: params[:id])
     end
 
     def list_params
-      params.require(:list).permit(:name, :start_time, :end_time, tasks_attributes: [:name, :est_time])
+      params.require(:list).permit(:name, :start_time, :end_time, :user_id, tasks_attributes: [:name, :est_time])
     end
 end
