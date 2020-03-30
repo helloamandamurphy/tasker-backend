@@ -2,7 +2,7 @@ class List < ApplicationRecord
   belongs_to :user
   has_many :tasks
 
-  validates :end_time, presence: true
+  validates :name, :end_time, presence: true
 
 # We'll need a method to find the worktime
 #(subtracting the end time from the current time)
