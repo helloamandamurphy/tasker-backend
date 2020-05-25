@@ -1,10 +1,7 @@
 class Api::V1::ListsController < ApplicationController
-
-  # before_action :set_user
+  before_action :set_list, only: [:show, :update, :destroy]
 
   def index
-    # @lists = List.all
-    # @lists = @user.lists
     if logged_in?
       @lists = current_user.lists
       render json: @lists, status: 200
@@ -16,16 +13,11 @@ class Api::V1::ListsController < ApplicationController
   end
 
   def show
-    find_user_list
-    # @list = @user.lists.find_by(id: params[:id])
-    # @list = List.find(params[:id])
     render json: @list, status: 200
   end
 
   def create
-    @list = List.new(list_params)
-    # This is not currently saving, because there is no User associated with it.
-    #@list = @account.lists.build(list_params)
+    @list = current_user.lists.build(list_params)
     if @list.save
       render json: @list, status: :created
     else
@@ -36,33 +28,34 @@ class Api::V1::ListsController < ApplicationController
     end
   end
 
-#Need some sort of method (probably in List.rb) that confirms that updates can only be made by the list owner.
   def update
-    find_user_list
-    # @list = List.find(params[:id])
-    render json: @list, status: 200
+    if @list.update(list_params)
+      render json: @list, status: :ok
+    else
+      error_resp = {
+        error: @list.errors.full_messages.to_sentence
+      }
+      render json: @list.errors, status: :unprocessable_entity
+    end
   end
 
   def destroy
-    find_user_list
-    # @list = List.find(params[:id])
-    @list.delete
-
-    render json: {listId: @list.id}
+    if @list.destroy
+      render json:  { data: "List successfully destroyed" }, status: :ok
+    else
+      error_resp = {
+        error: "Trip not found and not destroyed"
+      }
+      render json: error_resp, status: :unprocessable_entity
+    end
   end
 
   private
-  # This sets the user based on the list's user id.
-    def set_user
-      @user = User.find(params[:user_id])
-    end
-
-  # This sets the list by finding the list id belonging to the user.
-    def find_user_list
-      @list = @user.lists.find_by(id: params[:id])
+    def set_list
+      @list = List.find(params[:id])
     end
 
     def list_params
-      params.require(:list).permit(:name, :start_time, :end_time, :user_id, tasks_attributes: [:name, :est_time])
+      params.require(:list).permit(:name, :start_time, :end_time, tasks_attributes: [:name, :est_time])
     end
 end
