@@ -41,10 +41,10 @@ class Api::V1::ListsController < ApplicationController
 
   def destroy
     if @list.destroy
-      render json:  { data: "List successfully destroyed" }, status: :ok
+      render json:  { data: "Your list was successfully deleted." }, status: :ok
     else
       error_resp = {
-        error: "Trip not found and not destroyed"
+        error: "Your list could not be found or deleted."
       }
       render json: error_resp, status: :unprocessable_entity
     end
