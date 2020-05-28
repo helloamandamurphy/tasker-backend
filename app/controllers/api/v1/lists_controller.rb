@@ -7,7 +7,7 @@ class Api::V1::ListsController < ApplicationController
       render json: @lists, status: 200
     else
       render json: {
-        error: "You must be logged in to view lists."
+        error: "You must log in to view lists."
       }
     end
   end
